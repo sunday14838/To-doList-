@@ -39,104 +39,142 @@ class _MyHomePageState extends State<MyHomePage> {
     db.updatedata();
   }
 
-
   final currentuser = FirebaseAuth.instance.currentUser!;
-
 
   @override
   Widget build(BuildContext context) {
+    // Using MediaQuery to query device height and width property
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-        backgroundColor: Colors.grey,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.grey,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(flex: 4, child: Text(currentuser.email!)),
-              Expanded(
+      backgroundColor: Colors.white60,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.deepPurple,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(flex: 4, child: Text(currentuser.email!)),
+            Expanded(
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
                 child: MaterialButton(
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
                     },
-                    child: Icon(Icons.logout)),
+                    child: Icon(
+                      Icons.logout,
+                      color: Colors.pinkAccent,
+                    )),
               ),
-            ],
-          ),
-        ),
-        floatingActionButton: DraggableFab(
-          child: FloatingActionButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.grey,
-                      content: Container(
-                        height: 200,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            TextField(
-                              controller: controller,
-                              decoration: InputDecoration(
-                                  hintText: 'Create a todo ',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10))),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RawMaterialButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      db.todolist.add([controller.text, false]);
-                                      controller.clear();
-                                    });
-                                    db.updatedata();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Save'),
-                                  fillColor: Colors.white70,
-                                ),
-                                RawMaterialButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Delete'),
-                                  fillColor: Colors.white70,
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  });
-            },
-            child: Text(
-              '+',
-              style: TextStyle(fontSize: 30),
             ),
-            backgroundColor: Colors.black87,
-          ),
+          ],
         ),
-        body: ListView.builder(
-            reverse: true,
-            itemCount: db.todolist.length,
-            itemBuilder: (context, index) {
-              return Todo(
-                  text: db.todolist[index][0],
-                  value: db.todolist[index][1],
-                  onChanged: (value) {
-                    onchange(value, index);
-                  },
-                  delete: () {
-                    setState(() {
-                      db.todolist.removeAt(index);
+      ),
+      floatingActionButton: DraggableFab(
+        child: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.white,
+                    content: Container(
+                      height: 200,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                                hintText: 'Create a todo ',
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10))),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              RawMaterialButton(
+                                onPressed: () {
+                                  setState(() {
+                                    db.todolist.add([controller.text, false]);
+                                    controller.clear();
+                                  });
+                                  db.updatedata();
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Save',
+                                    style: TextStyle(color: Colors.white)),
+                                fillColor: Colors.deepPurple,
+                              ),
+                              RawMaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                fillColor: Colors.deepPurple,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                });
+          },
+          child: Text(
+            '+',
+            style: TextStyle(fontSize: 30),
+          ),
+          backgroundColor: Colors.deepPurple,
+        ),
+      ),
+      // remove dummy data and permit user to start the todoList afresh
+      // check if todoList is empty to return a separate widget using ternary operator
+      body: db.todolist.isEmpty
+          ? Center(
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'No ToDo Created Yet!',
+                  style: TextStyle(fontSize: 16.0, color: Colors.pinkAccent),
+                ),
+                SizedBox(height: 8.0),
+                SizedBox(
+                  height: height * 0.4,
+                  child: Image(
+                    image: AssetImage('images/todo_cover.png'),
+                  ),
+                ),
+              ],
+            ))
+          : ListView.builder(
+              reverse: true,
+              // User shrinkWrap to make the list align top
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              itemCount: db.todolist.length,
+              itemBuilder: (context, index) {
+                // Fetch all todoList then reverse the list before being used in the builder
+                List todoList = db.todolist;
+                return Todo(
+                    key: UniqueKey(),
+                    text: todoList[index][0],
+                    value: todoList[index][1],
+                    onChanged: (value) {
+                      onchange(value, index);
+                    },
+                    delete: () {
+                      setState(() {
+                        db.todolist.removeAt(index);
+                      });
+                      db.updatedata();
                     });
-                    db.updatedata();
-                  });
-            }));
+              }),
+    );
   }
 }

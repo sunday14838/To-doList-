@@ -22,6 +22,7 @@ class Todo extends StatelessWidget {
       margin: EdgeInsets.only(left: 20, right: 20, top: 10,bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white10,
+        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -32,7 +33,7 @@ class Todo extends StatelessWidget {
             child: Text(
               text,
               style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 18.0,
                   decoration: value ? TextDecoration.lineThrough : null),
             ),
           ),

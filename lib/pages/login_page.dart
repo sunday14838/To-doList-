@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sign_in/forgot_password_page.dart';
+import 'package:sign_in/pages/forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   VoidCallback showregisterpage;

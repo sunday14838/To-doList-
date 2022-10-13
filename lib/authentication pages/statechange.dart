@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sign_in/auth_page.dart';
-import 'package:sign_in/home_page.dart';
-import 'package:sign_in/login_page.dart';
+import 'package:sign_in/authentication%20pages/auth_page.dart';
+import 'package:sign_in/pages/home_page.dart';
+import 'package:sign_in/pages/login_page.dart';
 
 
 class StateChange extends StatelessWidget {
